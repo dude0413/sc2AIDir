@@ -21,7 +21,7 @@ class MitchyBot(sc2.BotAI):
         await self.offensive_force_buildings()
         await self.build_offensive_force()
         await self.attack()
-    """Build Workers
+    """Build Workers"""
     async def build_workers(self):
         if (len(self.units(NEXUS)) * 16) > len(self.units(PROBE)) and len(self.units(PROBE)) < self.MAX_WORKERS:
             for nexus in self.units(NEXUS).ready.noqueue:
