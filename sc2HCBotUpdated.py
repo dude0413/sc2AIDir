@@ -57,13 +57,15 @@ class MitchyBot(sc2.BotAI):
                     await self.do(worker.build(ASSIMILATOR, vaspene))
 
     """Expand:
-    Logic: """
+    Logic: If the amount of nexuses is less than the number of minutes and you can afford it, expand"""
     async def expand(self):
         if self.units(NEXUS).amount < (self.iteration / self.ITERATIONS_PER_MINUTE) and self.can_afford(NEXUS):
             await self.expand_now()
 
     """Build Offensive Force Buildings:
-    Logic: """
+    Logic: If a pylon is ready, if a gateway exists but not a cyberneticscore and you can afford one,
+    build a cyberneticscore (if not pending). If the number of gateways is less than the minutes into the game / 2,
+    create a gateway. If a cyberneticscore exists, build a stargate (minutes into game/2). """
     async def offensive_force_buildings(self):
         #print(self.iteration / self.ITERATIONS_PER_MINUTE)
         if self.units(PYLON).ready.exists:
@@ -93,7 +95,8 @@ class MitchyBot(sc2.BotAI):
             if self.can_afford(VOIDRAY) and self.supply_left > 0:
                 await self.do(sg.train(VOIDRAY))
     """ FUNCTION: Find Target:
-    Logic: """
+    Logic: If we have some known enemies, use those as the target, if we know some structures, attack those, if not
+    go to the starting locations of the enemy."""
     def find_target(self, state):
         if len(self.known_enemy_units) > 0:
             return random.choice(self.known_enemy_units)
