@@ -5,6 +5,12 @@ from sc2.constants import NEXUS, PROBE, PYLON, ASSIMILATOR, GATEWAY, \
  CYBERNETICSCORE, STALKER, STARGATE, VOIDRAY
 import random
 
+# Setup Game Variables #
+race = Race.Protoss
+enemy_race = Race.Terran
+enemy_difficulty = Difficulty.Hard
+realtime_condition = False
+map_name = "AbyssalReefLE"
 
 class MitchyBot(sc2.BotAI):
     def __init__(self):
@@ -36,7 +42,8 @@ class MitchyBot(sc2.BotAI):
             if nexuses.exists:
                 if self.can_afford(PYLON):
                     await self.build(PYLON, near=nexuses.first)
-    """Build Assi"""
+    """Build Assimilators:
+    Logic: """
     async def build_assimilators(self):
         for nexus in self.units(NEXUS).ready:
             vaspenes = self.state.vespene_geyser.closer_than(15.0, nexus)
@@ -49,10 +56,14 @@ class MitchyBot(sc2.BotAI):
                 if not self.units(ASSIMILATOR).closer_than(1.0, vaspene).exists:
                     await self.do(worker.build(ASSIMILATOR, vaspene))
 
+    """Expand:
+    Logic: """
     async def expand(self):
         if self.units(NEXUS).amount < (self.iteration / self.ITERATIONS_PER_MINUTE) and self.can_afford(NEXUS):
             await self.expand_now()
 
+    """Build Offensive Force Buildings:
+    Logic: """
     async def offensive_force_buildings(self):
         #print(self.iteration / self.ITERATIONS_PER_MINUTE)
         if self.units(PYLON).ready.exists:
@@ -70,7 +81,8 @@ class MitchyBot(sc2.BotAI):
                 if len(self.units(STARGATE)) < ((self.iteration / self.ITERATIONS_PER_MINUTE)/2):
                     if self.can_afford(STARGATE) and not self.already_pending(STARGATE):
                         await self.build(STARGATE, near=pylon)
-
+    """Build Offensive Force
+    Logic: """
     async def build_offensive_force(self):
         for gw in self.units(GATEWAY).ready.noqueue:
             if not self.units(STALKER).amount > self.units(VOIDRAY).amount:
@@ -80,7 +92,8 @@ class MitchyBot(sc2.BotAI):
         for sg in self.units(STARGATE).ready.noqueue:
             if self.can_afford(VOIDRAY) and self.supply_left > 0:
                 await self.do(sg.train(VOIDRAY))
-
+    """ FUNCTION: Find Target:
+    Logic: """
     def find_target(self, state):
         if len(self.known_enemy_units) > 0:
             return random.choice(self.known_enemy_units)
@@ -88,7 +101,8 @@ class MitchyBot(sc2.BotAI):
             return random.choice(self.known_enemy_structures)
         else:
             return self.enemy_start_locations[0]
-
+    """Attack:
+    Logic: """
     async def attack(self):
         # {UNIT: [n to fight, n to defend]}
         aggressive_units = {STALKER: [15, 5],
@@ -106,7 +120,7 @@ class MitchyBot(sc2.BotAI):
                         await self.do(s.attack(random.choice(self.known_enemy_units)))
 
 
-run_game(maps.get("AbyssalReefLE"), [
-    Bot(Race.Protoss, MitchyBot()),
-    Computer(Race.Terran, Difficulty.Hard)
-    ], realtime=False)
+run_game(maps.get(map_name), [
+    Bot(race, MitchyBot()),
+    Computer(enemy_race, enemy_difficulty)
+    ], realtime=realtime_condition)
