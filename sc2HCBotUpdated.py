@@ -28,14 +28,15 @@ class MitchyBot(sc2.BotAI):
                 if self.can_afford(PROBE):
                     await self.do(nexus.train(PROBE))
 
-
+    """Build Pylons: 
+    Logic: If 'Supply' is less than 5 and we arent already making a Pylon, create one near the first nexus."""
     async def build_pylons(self):
         if self.supply_left < 5 and not self.already_pending(PYLON):
             nexuses = self.units(NEXUS).ready
             if nexuses.exists:
                 if self.can_afford(PYLON):
                     await self.build(PYLON, near=nexuses.first)
-
+    """Build Assi"""
     async def build_assimilators(self):
         for nexus in self.units(NEXUS).ready:
             vaspenes = self.state.vespene_geyser.closer_than(15.0, nexus)
