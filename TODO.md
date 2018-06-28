@@ -1,1 +1,13 @@
-*TODOS*
+# ToDo List #
+## Protoss ##
+* 
+* 
+* 
+* 
+*
+## Zerg ##
+*
+* 
+*
+*
+*
