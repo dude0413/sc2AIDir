@@ -107,18 +107,19 @@ class MitchyBot(sc2.BotAI):
         else:
             return self.enemy_start_locations[0]
     """Attack:
-    Logic: """
+    Logic: Down BELOW"""
     async def attack(self):
         # {UNIT: [n to fight, n to defend]}
         aggressive_units = {STALKER: [15, 5],
                             VOIDRAY: [8, 3]}
 
-
+        # For every stalker and then voidray #
         for UNIT in aggressive_units:
+            # If we have more UNITs than what is specified for fight and defend, find a target and attack #
             if self.units(UNIT).amount > aggressive_units[UNIT][0] and self.units(UNIT).amount > aggressive_units[UNIT][1]:
                 for s in self.units(UNIT).idle:
                     await self.do(s.attack(self.find_target(self.state)))
-
+            # If we have more than the defend value and we know some enemy unit locations, attack a random enemy #
             elif self.units(UNIT).amount > aggressive_units[UNIT][1]:
                 if len(self.known_enemy_units) > 0:
                     for s in self.units(UNIT).idle:
