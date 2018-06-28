@@ -36,7 +36,7 @@ class MitchyBot(sc2.BotAI):
                     await self.do(nexus.train(PROBE))
 
     """Build Pylons: 
-    Logic: If 'Supply' is less than 5 and we arent already making a Pylon, create one near the first nexus."""
+    Logic: If if we have less than 5 supply left and we arent already making a Pylon, create one near the first nexus."""
     async def build_pylons(self):
         if self.supply_left < 5 and not self.already_pending(PYLON):
             nexuses = self.units(NEXUS).ready
@@ -44,7 +44,7 @@ class MitchyBot(sc2.BotAI):
                 if self.can_afford(PYLON):
                     await self.build(PYLON, near=nexuses.first)
     """Build Assimilators:
-    Logic: """
+    Logic: For every nexus, geysers closer than 15 units, if a worker and not already there, build one"""
     async def build_assimilators(self):
         for nexus in self.units(NEXUS).ready:
             vaspenes = self.state.vespene_geyser.closer_than(15.0, nexus)
@@ -85,7 +85,8 @@ class MitchyBot(sc2.BotAI):
                     if self.can_afford(STARGATE) and not self.already_pending(STARGATE):
                         await self.build(STARGATE, near=pylon)
     """Build Offensive Force
-    Logic: """
+    Logic: For every no queue gateway, if we have more stalkers than voidrays and we can afford one with more than
+    0 supply left, create a stalker"""
     async def build_offensive_force(self):
         for gw in self.units(GATEWAY).ready.noqueue:
             if not self.units(STALKER).amount > self.units(VOIDRAY).amount:
